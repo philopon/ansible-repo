@@ -1,8 +1,17 @@
 ---
 - name: copy github secret key
-  copy: src=~/.ssh/github dest=~/.ssh/github
+  copy: src=~/.ssh/github.nopass dest=~/.ssh/github
   tags: tools
 
 - name: add github to known_hosts
   known_hosts: host=github.com file=~/.ssh/known_hosts
+
+- name: add github.com to .ssh/config
+  ssh_config: host=github.com
+              User=git
+              IdentityFile=~/.ssh/github
+              Port=22
+              HostName=github.com
+              TCPKeepAlive=yes
+              IdentitiesOnly=yes
 
