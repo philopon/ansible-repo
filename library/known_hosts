@@ -1,0 +1,68 @@
+#!/usr/bin/python
+
+def get_host(line):
+    return line.split(' ')[0]
+
+def split_by_target(filename, target):
+    bf  = []
+    tgt = None
+    af  = []
+
+    if not os.path.isfile(filename): return (bf,tgt,af)
+
+    with open(filename, 'r') as file:
+        for line in file:
+            if get_host(line) == target:
+                tgt = line
+                for line in file: af.append(line)
+            else:
+                bf.append(line)
+    return (bf, tgt, af)
+
+def ssh_keyscan(host, program="ssh-keyscan", args=[]):
+    import subprocess
+    import os
+    return subprocess.check_output(
+            [program] + args + [host], 
+            stderr = open(os.devnull, 'w')
+            )
+
+def present(module, line, file, raw=False, check=False):
+    import subprocess
+    host = get_host(line)
+    (bf,tgt,af) = split_by_target(file, host)
+    if tgt is not None: module.exit_json(changed = False, msg = "already exists.")
+    if check: module.exit_json(changed = True)
+
+    addline = ssh_keyscan(host) if not raw else line
+    with open(file, 'a') as h:
+        h.write(addline)
+    module.exit_json(changed=True, msg="add %s to %s" % (host, file))
+
+
+from ansible.module_utils.basic import *
+def main():
+    import os
+    module = AnsibleModule(
+            argument_spec = dict(
+                host  = dict(required=True, aliases=['name', 'line']),
+                raw   = dict(default=False, choices=BOOLEANS),
+                file  = dict(default='~/.ssh/known_hosts'),
+                state = dict(default='present', choices=['present']),
+                ),
+            supports_check_mode = True
+            )
+    line  = module.params['host']
+    file  = os.path.expanduser(module.params['file'])
+    state = module.params['state']
+
+    raw   = module.params['raw']
+    check = module.check_mode
+
+    if state == 'present':
+        try:
+            present(module, line, file, raw, check)
+        except Exception as e:
+            module.exit_json(changed = False, msg=str(e))
+
+main()

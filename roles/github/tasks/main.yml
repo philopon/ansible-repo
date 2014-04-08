@@ -1,0 +1,8 @@
+---
+- name: copy github secret key
+  copy: src=~/.ssh/github dest=~/.ssh/github
+  tags: tools
+
+- name: add github to known_hosts
+  known_hosts: host=github.com file=~/.ssh/known_hosts
+
