@@ -1,22 +1,8 @@
 ---
-- name: copy github secret key
-  tags: github
-  copy: src=~/.ssh/github.nopass dest=~/.ssh/github mode=600
-
-- name: add github to known_hosts
-  tags: github
-  known_hosts: host=github.com
-
-- name: add github.com to .ssh/config
-  tags: github
-  ssh_config: host=github.com
-              User=git
-              IdentityFile=~/.ssh/github
-              Port=22
-              HostName=github.com
-              TCPKeepAlive=yes
-              IdentitiesOnly=yes
-
 - name: install git
   apt:  pkg=git state=installed
   sudo: yes
+  tags: github
+
+- include: github.yml
+  tags: github
