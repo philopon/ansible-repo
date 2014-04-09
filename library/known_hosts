@@ -1,44 +1,57 @@
 #!/usr/bin/python
+import os
 
-def get_host(line):
-    return line.split(' ')[0]
+SSH_KEYSCAN = "ssh-keyscan"
+SSH_KEYGEN  = "ssh-keygen"
+KNOWN_HOSTS = os.path.expanduser('~/.ssh/known_hosts')
 
-def split_by_target(filename, target):
-    bf  = []
-    tgt = None
-    af  = []
-
-    if not os.path.isfile(filename): return (bf,tgt,af)
-
-    with open(filename, 'r') as file:
-        for line in file:
-            if get_host(line) == target:
-                tgt = line
-                for line in file: af.append(line)
-            else:
-                bf.append(line)
-    return (bf, tgt, af)
-
-def ssh_keyscan(host, program="ssh-keyscan", args=[]):
-    import subprocess
-    import os
-    return subprocess.check_output(
-            [program] + args + [host], 
-            stderr = open(os.devnull, 'w')
+def check_pipe(prog):
+    proc = subprocess.Popen(
+            prog,
+            stdout = subprocess.PIPE,
+            stderr = subprocess.PIPE,
             )
+    code = proc.wait()
+    if code != 0:
+        msg = proc.stderr.read()
+        proc.stdout.close()
+        proc.stderr.close()
+        raise subprocess.CalledProcessError(code, prog, msg)
+    else:
+        proc.stderr.close()
+        return proc.stdout
 
-def present(module, line, file, raw=False, check=False):
+import re
+host_re = re.compile('#\s*host\s+(\S+)\s+found[:\s]+line\s+(\d+)\s+type\s+(\S+)', re.IGNORECASE)
+
+def find_known_hosts(host):
+    if not os.path.isfile(KNOWN_HOSTS): return []
+
+    pipe = check_pipe([SSH_KEYGEN, '-F', host])
+    ret = []
+    for line in pipe:
+        match = host_re.match(line)
+        if match:
+            ret.append((match.group(1), int(match.group(2)), match.group(3)))
+    pipe.close()
+    return ret
+            
+def ssh_keyscan(host, hash):
+    args = [SSH_KEYSCAN]
+    if hash: args.append('-H')
+    args.append(host)
+    output = subprocess.check_output(args, stderr = open(os.devnull, 'w'))
+    return output
+
+def present(module, host, hash, check):
     import subprocess
-    host = get_host(line)
-    (bf,tgt,af) = split_by_target(file, host)
-    if tgt is not None: module.exit_json(changed = False, msg = "already exists.")
-    if check: module.exit_json(changed = True)
+    hits = find_known_hosts(host)
+    if check: module.exit_json(changed = bool(hits))
+    if hits:  module.exit_json(changed = False)
 
-    addline = ssh_keyscan(host) if not raw else line
-    with open(file, 'a') as h:
-        h.write(addline)
-    module.exit_json(changed=True, msg="add %s to %s" % (host, file))
-
+    with open(KNOWN_HOSTS, 'a') as file:
+        file.write(ssh_keyscan(host, hash))
+    module.exit_json(changed = True)
 
 from ansible.module_utils.basic import *
 def main():
@@ -46,22 +59,20 @@ def main():
     module = AnsibleModule(
             argument_spec = dict(
                 host  = dict(required=True, aliases=['name', 'line']),
-                raw   = dict(default=False, choices=BOOLEANS),
-                file  = dict(default='~/.ssh/known_hosts'),
+                hash  =  dict(default=True, choices=BOOLEANS),
                 state = dict(default='present', choices=['present']),
                 ),
             supports_check_mode = True
             )
-    line  = module.params['host']
-    file  = os.path.expanduser(module.params['file'])
+    host  = module.params['host']
+    hash  = module.params['hash']
     state = module.params['state']
 
-    raw   = module.params['raw']
     check = module.check_mode
 
     if state == 'present':
         try:
-            present(module, line, file, raw, check)
+            present(module, host, hash, check)
         except Exception as e:
             module.exit_json(changed = False, msg=str(e))
 

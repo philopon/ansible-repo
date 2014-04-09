@@ -4,7 +4,7 @@
   tags: tools
 
 - name: add github to known_hosts
-  known_hosts: host=github.com file=~/.ssh/known_hosts
+  known_hosts: host=github.com
 
 - name: add github.com to .ssh/config
   ssh_config: host=github.com
