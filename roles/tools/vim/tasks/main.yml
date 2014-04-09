@@ -1,0 +1,12 @@
+---
+- name: install vim
+  apt:  pkg=vim state=installed
+  sudo: True
+
+- name:  clone .vim
+  git16: repo=git@github.com:philopon/.vim.git update=no
+         dest=~/.vim accept_hostkey=yes recursive=yes
+
+- name: link .vimrc
+  file: src=~/.vim/vimrc dest=~/.vimrc state=link
+
