@@ -1,7 +1,4 @@
 ---
-ghc_command:     ghc
-ghc_pkg_command: ghc-pkg
-
 cabal_archive: cabal-install-1.18.0.3.tar.gz
 cabal_url: http://hackage.haskell.org/package/cabal-install-1.18.0.3/{{cabal_archive}}
 cabal_prefix: /usr/local
