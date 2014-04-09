@@ -1,5 +1,0 @@
----
-- include: internal.yml
-  tags: database
-  sudo: True
-
