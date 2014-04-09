@@ -47,9 +47,9 @@
   shell: |
     ./Setup configure --user --package-db=package.conf.d --prefix={{cabal_prefix}}
     ./Setup build
-    ./Setup install --global
+    sudo ./Setup install
     chdir=/tmp/{{source.stdout_lines[0]}}
-    creates=dist/build/cabal/cabal
+    creates={{cabal_prefix}}/bin/cabal
 
 - name: cabal directory
   file: path=~/.cabal state=directory

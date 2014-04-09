@@ -13,7 +13,7 @@
 
 - name: install
   shell: |
-    cabal copy
+    sudo cabal copy
     cabal install
     chdir={{source.stdout_lines[0]}}
 

@@ -1,10 +1,7 @@
 ---
 - name: link libgmp
-  file: path=/usr/lib/x86_64-linux-gnu src=libgmp.so.10 dest={{item}} state=link
+  file: src=libgmp.so.10 dest=/usr/lib/x86_64-linux-gnu/libgmp.so state=link
   sudo: True
-  with_items:
-    - /usr/lib/x86_64-linux-gnu/libgmp.so
-    - /usr/lib/x86_64-linux-gnu/libgmp.so.3
 
 - name: fetch ghc archive
   get_url: url={{ghc_url}} dest=/tmp/{{ghc_archive}} validate_certs=no

@@ -3,7 +3,7 @@
   tags: ghc
   register: ghc_installed
   ignore_errors: True
-  command:  which ghc
+  command:  which {{ghc_command}}
 
 - include: install.yml
   tags: ghc
