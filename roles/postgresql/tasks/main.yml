@@ -1,0 +1,33 @@
+- name: install pycurl
+  sudo: yes
+  apt: pkg=python-pycurl
+
+
+- name: add repository key
+  sudo: yes
+  apt_key: id=ACCC4CF8 url=https://www.postgresql.org/media/keys/ACCC4CF8.asc
+
+- name: add postgresql repository
+  sudo: yes
+  apt_repository: repo="deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main" 
+
+- name: install postgresql
+  sudo: yes
+  apt: pkg={{item}} update_cache=no 
+  with_items:
+    - postgresql-9.3
+    - python-psycopg2
+
+- name: start postgresql
+  sudo: yes
+  service: name=postgresql enabled=yes state=started
+
+- name: create user db
+  sudo: True
+  sudo_user: postgres
+  postgresql_db: name={{ansible_user_id}} encoding='UTF-8' lc_collate='ja_JP.UTF-8' lc_ctype='ja_JP.UTF-8'
+
+- name: create user
+  sudo: True
+  sudo_user: postgres
+  postgresql_user: db={{ansible_user_id}} name={{ansible_user_id}} password={{ansible_user_id}} role_attr_flags=SUPERUSER
