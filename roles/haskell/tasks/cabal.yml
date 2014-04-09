@@ -1,0 +1,78 @@
+---
+- name: install zlib
+  sudo: True
+  apt: pkg=zlib1g-dev update_cache=no 
+
+- name: fetch cabal-install source
+  get_url: url={{cabal_url}} dest=/tmp/{{cabal_archive}} validate_certs=no
+
+- name: get cabal-install output directory
+  register: source
+  script: ../tar_output.sh /tmp/{{cabal_archive}}
+
+- name: unarchive cabal-install
+  command: tar xf {{cabal_archive}} chdir=/tmp creates={{source.stdout_lines[0]}}
+
+- name: create temporary package db directory
+  file: path=/tmp/{{source.stdout_lines[0]}}/package.conf.d state=directory
+
+- name: create package cache
+  command: |
+    {{ghc_pkg_command}} recache --package-db=/tmp/{{source.stdout_lines[0]}}/package.conf.d 
+    creates=/tmp/{{source.stdout_lines[0]}}/package.conf.d/package.cache
+
+- name: compile Setup.hs
+  command: |
+    {{ghc_command}} Setup.hs chdir=/tmp/{{source.stdout_lines[0]}} creates=Setup
+
+- name: create bootstrap1.sh
+  shell: |
+    grep -v '^install_pkg "cabal-install"' bootstrap.sh > bootstrap1.sh
+    chmod +x bootstrap1.sh 
+    chdir=/tmp/{{source.stdout_lines[0]}} creates=bootstrap1.sh
+
+- name: check dependencies
+  register: dependencies
+  ignore_errors: True
+  command: |
+    ./Setup configure --user --package-db=package.conf.d chdir=/tmp/{{source.stdout_lines[0]}}
+
+- name: install cabal-install only-dependencies
+  command: ./bootstrap1.sh chdir=/tmp/{{source.stdout_lines[0]}}
+  environment:
+    GHC: "{{ghc_command}}"
+    GHC_PKG: "{{ghc_pkg_command}}"
+    EXTRA_CONFIGURE_OPTS: --package-db=/tmp/{{source.stdout_lines[0]}}/package.conf.d 
+  when: dependencies|failed
+
+- name: build cabal-install
+  shell: |
+    ./Setup configure --user --package-db=package.conf.d --prefix={{cabal_prefix}}
+    ./Setup build
+    chdir=/tmp/{{source.stdout_lines[0]}}
+    creates=dist/build/cabal/cabal
+
+- name: install cabal-install
+  sudo: True
+  command: |
+    ./Setup install
+    chdir=/tmp/{{source.stdout_lines[0]}}
+    creates={{cabal_prefix}}/bin/cabal
+
+- name: cabal config file
+  template: src=../templates/cabal.j2 dest=~/.cabal/config
+
+- name: get Cabal directory
+  register: cabal_source
+  command:  find /tmp/{{source.stdout_lines[0]}} -maxdepth 1 -type d -name Cabal*
+
+- name: install Cabal to global
+  sudo: True
+  command: cabal install --global chdir={{cabal_source.stdout_lines[0]}}
+
+- name: cleanup cabal
+  sudo: True
+  file: path=/tmp/{{item}} state=absent 
+  with_items:
+    - "{{source.stdout_lines[0]}}"
+    - "{{cabal_archive}}"

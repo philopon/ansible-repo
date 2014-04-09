@@ -6,24 +6,24 @@
     - /usr/lib/x86_64-linux-gnu/libgmp.so
     - /usr/lib/x86_64-linux-gnu/libgmp.so.3
 
-- name: fetch file
+- name: fetch ghc archive
   get_url: url={{ghc_url}} dest=/tmp/{{ghc_archive}} validate_certs=no
 
-- name: get output directory
+- name: get ghc output directory
   register: source
   script:   ../tar_output.sh /tmp/{{ghc_archive}}
 
-- name: unarchive
+- name: unarchive ghc
   command: tar xf {{ghc_archive}} chdir=/tmp creates="{{source.stdout_lines[0]}}"
 
-- name: configure
+- name: ghc configure
   command: ./configure --prefix={{ghc_prefix}} chdir="/tmp/{{source.stdout_lines[0]}}" creates="settings"
 
-- name: install
+- name: install ghc
   sudo: True
   command: make install chdir="/tmp/{{source.stdout_lines[0]}}"
 
-- name: clean up
+- name: clean up ghc
   file: path=/tmp/{{item}} state=absent 
   with_items:
     - "{{source.stdout_lines[0]}}"

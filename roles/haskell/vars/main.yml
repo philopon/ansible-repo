@@ -1,3 +1,12 @@
-ghc_url: https://www.haskell.org/ghc/dist/7.6.3/ghc-7.6.3-x86_64-unknown-linux.tar.bz2
-ghc_archive: ghc_binary.tar.bz2
+---
+ghc_archive: ghc-7.6.3-x86_64-unknown-linux.tar.bz2
+ghc_url: https://www.haskell.org/ghc/dist/7.6.3/{{ghc_archive}}
 ghc_prefix: /usr/local
+
+ghc_command:     ghc
+ghc_pkg_command: ghc-pkg
+
+cabal_archive: cabal-install-1.18.0.3.tar.gz
+cabal_url: http://hackage.haskell.org/package/cabal-install-1.18.0.3/{{cabal_archive}}
+cabal_prefix: /usr/local
+
