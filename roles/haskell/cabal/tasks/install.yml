@@ -3,15 +3,21 @@
   sudo: True
   apt: pkg=zlib1g-dev update_cache=no 
 
+- name: get cabal-install latest version
+  register: cabal_version
+  changed_when: False
+  script: ../../hackage_latest.py cabal-install
+
 - name: fetch cabal-install source
-  get_url: url={{cabal_url}} dest=/tmp/{{cabal_archive}} validate_certs=no
+  get_url: url={{hackage_url}}/package/cabal-install-{{cabal_version.stdout_lines[0]}}/cabal-install-{{cabal_version.stdout_lines[0]}}.tar.gz
+           dest=/tmp/cabal-install.tar.gz validate_certs=no
 
 - name: get cabal-install output directory
   register: source
-  script: ../../tar_output.sh /tmp/{{cabal_archive}}
+  script: ../../tar_output.sh /tmp/cabal-install.tar.gz
 
 - name: unarchive cabal-install
-  command: tar xf {{cabal_archive}} chdir=/tmp creates={{source.stdout_lines[0]}}
+  command: tar xf cabal-install.tar.gz chdir=/tmp creates={{source.stdout_lines[0]}}
 
 - name: create temporary package db directory
   file: path=/tmp/{{source.stdout_lines[0]}}/package.conf.d state=directory
@@ -64,4 +70,4 @@
   file: path={{item}} state=absent 
   with_items:
     - "/tmp/{{source.stdout_lines[0]}}"
-    - "/tmp/{{cabal_archive}}"
+    - "/tmp/cabal-install.tar.gz"
