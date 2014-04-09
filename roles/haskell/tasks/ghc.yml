@@ -1,0 +1,30 @@
+---
+- name: link libgmp
+  file: path=/usr/lib/x86_64-linux-gnu src=libgmp.so.10 dest={{item}} state=link
+  sudo: True
+  with_items:
+    - /usr/lib/x86_64-linux-gnu/libgmp.so
+    - /usr/lib/x86_64-linux-gnu/libgmp.so.3
+
+- name: fetch file
+  get_url: url={{ghc_url}} dest=/tmp/{{ghc_archive}} validate_certs=no
+
+- name: get output directory
+  register: source
+  script:   ../tar_output.sh /tmp/{{ghc_archive}}
+
+- name: unarchive
+  command: tar xf {{ghc_archive}} chdir=/tmp creates="{{source.stdout_lines[0]}}"
+
+- name: configure
+  command: ./configure --prefix={{ghc_prefix}} chdir="/tmp/{{source.stdout_lines[0]}}" creates="settings"
+
+- name: install
+  sudo: True
+  command: make install chdir="/tmp/{{source.stdout_lines[0]}}"
+
+- name: clean up
+  file: path=/tmp/{{item}} state=absent 
+  with_items:
+    - "{{source.stdout_lines[0]}}"
+    - "{{ghc_archive}}"

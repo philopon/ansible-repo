@@ -1,0 +1,10 @@
+---
+- name: install ghc
+  tags: ghc
+  register: ghc_installed
+  ignore_errors: True
+  command:  which ghc
+
+- include: ghc.yml
+  tags: ghc
+  when: ghc_installed|failed
