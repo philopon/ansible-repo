@@ -1,5 +1,8 @@
 ---
+allow_duplicates: yes
 dependencies:
   - role: haskell/ghc
   - role: haskell/cabal
+  - { role: haskell/tool, to_install_name: happy }
+  - { role: haskell/tool, to_install_name: alex }
 

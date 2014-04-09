@@ -1,0 +1,2 @@
+to_install_prefix: /usr/local
+to_install_executable: "{{ to_install_name }}"

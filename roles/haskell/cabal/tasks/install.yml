@@ -59,15 +59,19 @@
     chdir=/tmp/{{source.stdout_lines[0]}}
     creates={{cabal_prefix}}/bin/cabal
 
+- name: cabal directory
+  file: path=~/.cabal state=directory
+
 - name: cabal config file
   template: src=../templates/cabal.j2 dest=~/.cabal/config
+
+- command: cabal update
 
 - name: get Cabal source
   register: cabal_source
   script:  ../../cabal_safe_get.sh Cabal /tmp
 
 - name: install Cabal to global
-  sudo: True
   command: cabal install --global chdir={{ cabal_source.stdout_lines[0] }}
 
 - name: cleanup cabal

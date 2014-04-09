@@ -1,0 +1,22 @@
+---
+- name: get source
+  register: source
+  script: ../../cabal_safe_get.sh {{to_install_name}} /tmp
+
+- name: compile
+  shell: |
+    cabal sandbox init
+    cabal install --only-dependencies
+    cabal configure --prefix={{to_install_prefix}}
+    cabal build
+    chdir={{source.stdout_lines[0]}}
+
+- name: install
+  shell: |
+    cabal copy
+    cabal install
+    chdir={{source.stdout_lines[0]}}
+
+- name: cleanup
+  sudo: True
+  file: path={{source.stdout_lines[0]}} state=absent 

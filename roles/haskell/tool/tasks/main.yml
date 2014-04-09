@@ -1,0 +1,9 @@
+---
+- name: check
+  register: installed
+  ignore_errors: True
+  command:  which {{ to_install_executable }}
+
+- include: install.yml
+  when: installed|failed
+
