@@ -1,0 +1,15 @@
+---
+- name: install zsh
+  apt:  pkg=zsh state=installed
+  sudo: True
+
+- name:  clone .zsh.d
+  git16: repo=git@github.com:philopon/.zsh.d.git update=no
+         dest=~/.zsh.d accept_hostkey=yes recursive=yes
+
+- name: link .zshrc
+  file: src=~/.zsh.d/zshrc dest=~/.zshrc state=link
+
+- name: change shell
+  sudo: True
+  user: name={{ansible_user_id}} shell=/usr/bin/zsh 
