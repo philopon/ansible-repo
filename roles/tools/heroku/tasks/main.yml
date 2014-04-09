@@ -1,0 +1,4 @@
+---
+- name: install heroku
+  sudo: yes
+  apt: pkg=heroku-toolbelt update_cache=no 

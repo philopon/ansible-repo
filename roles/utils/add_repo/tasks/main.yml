@@ -1,0 +1,12 @@
+---
+- name: install pycurl
+  sudo: yes
+  apt: pkg=python-pycurl
+
+- name: add repository key
+  sudo: yes
+  apt_key: id="{{repo_id}}" url="{{repo_key_url}}"
+
+- name: add deb line
+  sudo: yes
+  apt_repository: repo="{{repo_deb_line}}"

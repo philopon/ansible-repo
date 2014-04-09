@@ -1,0 +1,5 @@
+dependencies:
+  - role:          'utils/add_repo' 
+    repo_id:       '0F1B0520'
+    repo_key_url:  'https://toolbelt.heroku.com/apt/release.key'
+    repo_deb_line: 'deb http://toolbelt.heroku.com/ubuntu ./'
