@@ -8,7 +8,7 @@
 
 - name: get cabal-install output directory
   register: source
-  script: ../tar_output.sh /tmp/{{cabal_archive}}
+  script: ../../tar_output.sh /tmp/{{cabal_archive}}
 
 - name: unarchive cabal-install
   command: tar xf {{cabal_archive}} chdir=/tmp creates={{source.stdout_lines[0]}}
@@ -62,17 +62,18 @@
 - name: cabal config file
   template: src=../templates/cabal.j2 dest=~/.cabal/config
 
-- name: get Cabal directory
+- name: get Cabal source
   register: cabal_source
-  command:  find /tmp/{{source.stdout_lines[0]}} -maxdepth 1 -type d -name Cabal*
+  script:  ../../cabal_safe_get.sh Cabal /tmp
 
 - name: install Cabal to global
   sudo: True
-  command: cabal install --global chdir={{cabal_source.stdout_lines[0]}}
+  command: cabal install --global chdir={{ cabal_source.stdout_lines[0] }}
 
 - name: cleanup cabal
   sudo: True
-  file: path=/tmp/{{item}} state=absent 
+  file: path={{item}} state=absent 
   with_items:
-    - "{{source.stdout_lines[0]}}"
-    - "{{cabal_archive}}"
+    - "/tmp/{{source.stdout_lines[0]}}"
+    - "/tmp/{{cabal_archive}}"
+    - "{{ cabal_source.stdout_lines[0] }}"

@@ -1,0 +1,11 @@
+---
+- name: check cabal
+  tags: cabal
+  register: cabal_installed
+  ignore_errors: True
+  command:  which cabal
+
+- include: install.yml
+  tags: cabal
+  when: cabal_installed|failed
+

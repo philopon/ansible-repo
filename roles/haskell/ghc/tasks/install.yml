@@ -11,7 +11,7 @@
 
 - name: get ghc output directory
   register: source
-  script:   ../tar_output.sh /tmp/{{ghc_archive}}
+  script:   ../../tar_output.sh /tmp/{{ghc_archive}}
 
 - name: unarchive ghc
   command: tar xf {{ghc_archive}} chdir=/tmp creates="{{source.stdout_lines[0]}}"

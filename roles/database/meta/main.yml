@@ -1,7 +1,4 @@
 ---
 dependencies:
-  - role:          'utils/add_repo' 
-    repo_id:       'ACCC4CF8'
-    repo_key_url:  'https://www.postgresql.org/media/keys/ACCC4CF8.asc'
-    repo_deb_line: 'deb http://apt.postgresql.org/pub/repos/apt/ wheezy-pgdg main'
+  - role:          'database/postgresql' 
 
