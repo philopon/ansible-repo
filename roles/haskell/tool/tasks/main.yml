@@ -2,6 +2,7 @@
 - name: check
   register: installed
   ignore_errors: True
+  changed_when: False
   command:  which {{ to_install_executable }}
 
 - include: install.yml

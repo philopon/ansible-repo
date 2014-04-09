@@ -3,6 +3,7 @@
   tags: cabal
   register: cabal_installed
   ignore_errors: True
+  changed_when: False
   command:  which cabal
 
 - include: install.yml
