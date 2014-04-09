@@ -1,0 +1,15 @@
+- name: install pycurl
+  sudo: yes
+  apt: pkg=python-pycurl
+
+- name: add repository key
+  sudo: yes
+  apt_key: id=0F1B0520 url=https://toolbelt.heroku.com/apt/release.key
+
+- name: add heroku repository
+  sudo: yes
+  apt_repository: repo="deb http://toolbelt.heroku.com/ubuntu ./"
+
+- name: install heroku
+  sudo: yes
+  apt: pkg=heroku-toolbelt update_cache=no 
