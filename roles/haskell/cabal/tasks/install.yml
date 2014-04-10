@@ -8,45 +8,49 @@
   changed_when: False
   script: ../../hackage_latest.py cabal-install
 
+- set_fact: cabal_url={{hackage_url}}/package/cabal-install-{{cabal_version.stdout_lines[0]}}/cabal-install-{{cabal_version.stdout_lines[0]}}.tar.gz
+
 - name: fetch cabal-install source
-  get_url: url={{hackage_url}}/package/cabal-install-{{cabal_version.stdout_lines[0]}}/cabal-install-{{cabal_version.stdout_lines[0]}}.tar.gz
+  get_url: url={{cabal_url}}
            dest=/tmp/cabal-install.tar.gz validate_certs=no
 
 - name: get cabal-install output directory
-  register: source
+  register: source_proc
   script: ../../tar_output.sh /tmp/cabal-install.tar.gz
 
+- set_fact: source={{source_proc.stdout_lines[0]}}
+
 - name: unarchive cabal-install
-  command: tar xf cabal-install.tar.gz chdir=/tmp creates={{source.stdout_lines[0]}}
+  command: tar xf cabal-install.tar.gz chdir=/tmp creates={{source}}
 
 - name: create temporary package db directory
-  file: path=/tmp/{{source.stdout_lines[0]}}/package.conf.d state=directory
+  file: path=/tmp/{{source}}/package.conf.d state=directory
 
 - name: create package cache
   command: |
-    ghc-pkg recache --package-db=/tmp/{{source.stdout_lines[0]}}/package.conf.d 
-    creates=/tmp/{{source.stdout_lines[0]}}/package.conf.d/package.cache
+    ghc-pkg recache --package-db=/tmp/{{source}}/package.conf.d 
+    creates=/tmp/{{source}}/package.conf.d/package.cache
 
 - name: compile Setup.hs
   command: |
-    ghc Setup.hs chdir=/tmp/{{source.stdout_lines[0]}} creates=Setup
+    ghc Setup.hs chdir=/tmp/{{source}} creates=Setup
 
 - name: create bootstrap1.sh
   shell: |
     grep -v '^install_pkg "cabal-install"' bootstrap.sh > bootstrap1.sh
     chmod +x bootstrap1.sh 
-    chdir=/tmp/{{source.stdout_lines[0]}} creates=bootstrap1.sh
+    chdir=/tmp/{{source}} creates=bootstrap1.sh
 
 - name: check dependencies
   register: dependencies
   ignore_errors: True
   command: |
-    ./Setup configure --user --package-db=package.conf.d chdir=/tmp/{{source.stdout_lines[0]}}
+    ./Setup configure --user --package-db=package.conf.d chdir=/tmp/{{source}}
 
 - name: install cabal-install only-dependencies
-  command: ./bootstrap1.sh chdir=/tmp/{{source.stdout_lines[0]}}
+  command: ./bootstrap1.sh chdir=/tmp/{{source}}
   environment:
-    EXTRA_CONFIGURE_OPTS: --package-db=/tmp/{{source.stdout_lines[0]}}/package.conf.d 
+    EXTRA_CONFIGURE_OPTS: --package-db=/tmp/{{source}}/package.conf.d 
   when: dependencies|failed
 
 - name: install cabal-install
@@ -54,7 +58,7 @@
     ./Setup configure --user --package-db=package.conf.d --prefix={{cabal_prefix}}
     ./Setup build
     sudo ./Setup install
-    chdir=/tmp/{{source.stdout_lines[0]}}
+    chdir=/tmp/{{source}}
     creates={{cabal_prefix}}/bin/cabal
 
 - name: cabal directory
@@ -69,5 +73,5 @@
   sudo: True
   file: path={{item}} state=absent 
   with_items:
-    - "/tmp/{{source.stdout_lines[0]}}"
+    - "/tmp/{{source}}"
     - "/tmp/cabal-install.tar.gz"
