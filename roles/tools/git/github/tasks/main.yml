@@ -1,0 +1,45 @@
+---
+# mac, debian
+
+- name: install curl
+  sudo: True
+  apt: pkg=curl
+  when: ansible_distribution == "Debian"
+
+- name: test key presence
+  command: test -f ~/.ssh/github
+  register: key_presence
+  ignore_errors: True
+  changed_when: False
+
+- name: create github key
+  command: ssh-keygen -t rsa -b 2048 -N '' -f ~/.ssh/github
+  when: key_presence|failed
+
+- name: get public key
+  register: public_key
+  command: cat ~/.ssh/github.pub
+  changed_when: False
+
+- name: include token
+  include_vars: "{{token_file_path}}"
+
+- name: create request
+  set_fact:
+    request_header: |
+      Authorization: token {{github_api_token}}
+    request_body: |
+      {
+        "title": "{{key_title}}",
+        "key":   "{{public_key.stdout_lines[0]}}"
+      }
+
+- name: register public key
+  register: result
+  command:
+    curl -s -w '%{http_code}'
+      -X POST -d '{{request_body | to_nice_json}}' -H '{{request_header}}' https://api.github.com/user/keys
+  failed_when:   result.stdout_lines[-1][0:3] != "201"
+  ignore_errors: result.stdout_lines[-1][0:3] != "422"
+  changed_when:  result.stdout_lines[-1][0:3] == "201"
+

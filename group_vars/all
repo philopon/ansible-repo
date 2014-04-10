@@ -1,0 +1,2 @@
+key_title:       "{{ansible_user_id}}@{{ansible_fqdn}}"
+token_file_path: token.json

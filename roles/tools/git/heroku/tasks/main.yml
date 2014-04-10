@@ -1,0 +1,45 @@
+---
+# mac, debian
+
+- name: install curl
+  sudo: True
+  apt: pkg=curl
+  when: ansible_distribution == "Debian"
+
+- name: test key presence
+  command: test -f ~/.ssh/heroku
+  register: key_presence
+  ignore_errors: True
+  changed_when: False
+
+- name: create heroku key
+  command: ssh-keygen -t rsa -b 2048 -N '' -f ~/.ssh/heroku
+  when: key_presence|failed
+
+- name: get public key
+  register: public_key
+  command: cat ~/.ssh/heroku.pub
+  changed_when: False
+
+- name: include token
+  include_vars: "{{token_file_path}}"
+
+- name: create request
+  set_fact:
+    request_body: |
+      {
+        "public_key":   "{{public_key.stdout_lines[0]}}"
+      }
+
+- name: register public key
+  register: result
+  command: |
+    curl -s -w '%{http_code}' -X POST https://api.heroku.com/account/keys
+    -d '{ "public_key": "{{public_key.stdout_lines[0]}}" }'
+    -H 'Accept: application/vnd.heroku+json; version=3'
+    -H 'Content-Type: application/json'
+    -u '{{heroku_user_name}}:{{heroku_api_token}}'
+  failed_when:   result.stdout_lines[-1][0:3] != "201"
+  ignore_errors: result.stdout_lines[-1][0:3] != "422"
+  changed_when:  result.stdout_lines[-1][0:3] == "201"
+

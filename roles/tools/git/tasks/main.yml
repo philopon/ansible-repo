@@ -2,7 +2,5 @@
 - name: install git
   apt:  pkg=git state=installed
   sudo: True
-  tags: github
+  when: ansible_distribution == "Debian"
 
-- include: github.yml
-  tags: github
