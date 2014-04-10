@@ -53,13 +53,16 @@
     EXTRA_CONFIGURE_OPTS: --package-db=/tmp/{{source}}/package.conf.d 
   when: dependencies|failed
 
-- name: install cabal-install
+- name: compile cabal-install
   shell: |
     ./Setup configure --user --package-db=package.conf.d --prefix={{cabal_prefix}}
     ./Setup build
-    sudo ./Setup install
     chdir=/tmp/{{source}}
-    creates={{cabal_prefix}}/bin/cabal
+    creates=dist/build/cabal/cabal
+
+- name: install cabal-install
+  sudo: True
+  command: ./Setup install chdir=/tmp/{{source}} creates={{cabal_prefix}}/bin/cabal
 
 - name: cabal directory
   file: path=~/.cabal state=directory

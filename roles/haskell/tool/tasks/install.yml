@@ -12,8 +12,9 @@
     chdir={{source.stdout_lines[0]}}
 
 - name: install
+  sudo: True
   shell: |
-    sudo cabal copy
+    cabal copy
     cabal install
     chdir={{source.stdout_lines[0]}}
 
