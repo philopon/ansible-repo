@@ -2,6 +2,7 @@
 - name: install zsh
   apt:  pkg=zsh state=installed
   sudo: True
+  when: ansible_distribution == "Debian"
 
 - name:  clone .zsh.d
   git16: repo=git@github.com:philopon/.zsh.d.git update=no

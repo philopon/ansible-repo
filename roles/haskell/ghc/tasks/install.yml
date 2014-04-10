@@ -2,6 +2,7 @@
 - name: link libgmp
   file: src=libgmp.so.10 dest=/usr/lib/x86_64-linux-gnu/libgmp.so state=link
   sudo: True
+  when: ansible_distribution == "Debian"
 
 - name: fetch ghc archive
   get_url: url={{ghc_url}} dest=/tmp/{{ghc_archive}} validate_certs=no

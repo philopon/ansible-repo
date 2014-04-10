@@ -2,6 +2,7 @@
 - name: install zlib
   sudo: True
   apt: pkg=zlib1g-dev update_cache=no 
+  when: ansible_distribution == "Debian"
 
 - name: get cabal-install latest version
   register: cabal_version

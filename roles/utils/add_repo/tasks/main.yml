@@ -1,12 +1,6 @@
 ---
-- name: install pycurl
+- name: add repository(Debian)
+  include: add.yml
   sudo: True
-  apt: pkg=python-pycurl
+  when: ansible_distribution == "Debian"
 
-- name: add repository key
-  sudo: True
-  apt_key: id="{{repo_id}}" url="{{repo_key_url}}"
-
-- name: add deb line
-  sudo: True
-  apt_repository: repo="{{repo_deb_line}}"

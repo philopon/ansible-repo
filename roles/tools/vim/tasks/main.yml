@@ -1,7 +1,8 @@
 ---
-- name: install vim
+- name: install vim(Debian)
   apt:  pkg=vim state=installed
   sudo: True
+  when: ansible_distribution == "Debian"
 
 - name:  clone .vim
   git16: repo=git@github.com:philopon/.vim.git update=no
