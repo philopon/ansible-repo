@@ -1,0 +1,22 @@
+---
+- command: find {{item}} -type f -exec rm -f {} \;
+  with_items: [ /var/cache, /var/lib/apt ]
+  sudo: True
+
+- name: set timestamp of apt directory
+  command: find /var/lib/apt -type d -exec touch -d '2000/1/1' {} \;
+  sudo: True
+
+- command: aptitude clean     -y
+  sudo: True
+
+- command: aptitude autoclean -y
+  sudo: True
+
+- file: path=~/.bash_history state=absent
+
+- file: path=~/.bash_history state=absent
+  sudo: True
+
+- command: find /var/log -type f -exec cp /dev/null {} \;
+  sudo: True

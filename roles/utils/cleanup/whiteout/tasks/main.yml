@@ -1,0 +1,5 @@
+---
+- shell: dd if=/dev/zero of=/whiteout bs=1k ; rm /whiteout
+  ignore_errors: True
+  sudo: True
+
