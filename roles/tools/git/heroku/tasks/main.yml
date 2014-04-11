@@ -3,7 +3,7 @@
 
 - name: install curl
   sudo: True
-  apt: pkg=curl
+  apt: pkg=curl {{update_apt}}
   when: ansible_distribution == "Debian"
 
 - name: test key presence

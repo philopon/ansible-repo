@@ -1,6 +1,6 @@
 ---
 - name: install zsh
-  apt:  pkg=zsh state=installed
+  apt:  pkg=zsh {{update_apt}}
   sudo: True
   when: ansible_distribution == "Debian"
 

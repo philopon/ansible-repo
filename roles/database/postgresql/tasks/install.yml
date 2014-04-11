@@ -1,6 +1,6 @@
 ---
 - name: install postgresql
-  apt: pkg={{item}} update_cache=no 
+  apt: pkg={{item}} {{update_apt}}
   with_items:
     - postgresql-9.3
     - python-psycopg2

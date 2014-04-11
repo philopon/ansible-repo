@@ -1,6 +1,6 @@
 ---
 - name: install pycurl
-  apt: pkg=python-pycurl
+  apt: pkg=python-pycurl {{update_apt}}
 
 - name: add repository key
   apt_key: id="{{repo_id}}" url="{{repo_key_url}}"

@@ -1,6 +1,6 @@
 ---
 - name: install vim(Debian)
-  apt:  pkg=vim state=installed
+  apt:  pkg=vim {{update_apt}}
   sudo: True
   when: ansible_distribution == "Debian"
 

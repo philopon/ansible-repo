@@ -1,5 +1,5 @@
 ---
 - name: install heroku(Debian)
   sudo: True
-  apt: pkg=heroku-toolbelt update_cache=no 
+  apt: pkg=heroku-toolbelt {{update_apt}}
   when: ansible_distribution == "Debian"
