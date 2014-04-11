@@ -43,3 +43,12 @@
   ignore_errors: result.stdout_lines[-1][0:3] != "422"
   changed_when:  result.stdout_lines[-1][0:3] == "201"
 
+- name: update .ssh/config
+  ssh_config:
+    host=github.com
+    User=git
+    Port=22
+    Hostname=github.com
+    IdentityFile=~/.ssh/github
+    TCPKeepAlive=yes
+    IdentitiesOnly=yes
