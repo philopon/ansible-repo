@@ -13,7 +13,10 @@
 - command: aptitude autoclean -y
   sudo: True
 
-- file: path=~/.bash_history state=absent
+- file: path={{item}} state=absent
+  with_items:
+    - ~/.bash_history
+    - ~/.ansible
 
 - file: path=~/.bash_history state=absent
   sudo: True
