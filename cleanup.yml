@@ -1,0 +1,6 @@
+---
+- hosts: all
+  roles:
+    - utils/cleanup/cache
+    - utils/cleanup/remove
+    - utils/cleanup/whiteout
