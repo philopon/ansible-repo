@@ -40,7 +40,7 @@ if HEROKU:
 
 ## write file
 
-filename = os.path.join(os.path.dirname(sys.argv[0]), "token.json")
+filename = os.path.join(os.path.dirname(sys.argv[0]), ".token.json")
 with open(filename, 'w') as file:
     file.write(json.dumps(result) + '\n')
 
