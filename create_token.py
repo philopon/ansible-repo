@@ -8,11 +8,9 @@ import urllib2
 import base64
 
 GITHUB      = True
-GITHUB_USER = "philopon"
 GITHUB_URL  = "https://api.github.com/authorizations"
 
 HEROKU      = True
-HEROKU_USER = "philopon.dependence@gmail.com"
 HEROKU_URL  = "https://api.heroku.com/oauth/authorizations"
 
 def request (url, username, password):
@@ -24,18 +22,25 @@ def request (url, username, password):
 result = {}
 
 if GITHUB:
-    r = request(GITHUB_URL, GITHUB_USER, getpass.getpass(prompt = "github password:"))
+    sys.stdout.write("github username:")
+    userid = raw_input()
+    passwd = getpass.getpass(prompt = "github password:")
+    r = request(GITHUB_URL, userid, passwd)
     s = filter(lambda x: x[u"note"] == "ansible", r)
     if s:
+       result["github_user_name"] = userid
        result["github_api_token"] = s[0][u"token"]
 
 # heroku
 
 if HEROKU:
-    r = request(HEROKU_URL, HEROKU_USER, getpass.getpass(prompt = "heroku password:"))
+    sys.stdout.write("heroku username:")
+    userid = raw_input()
+    passwd = getpass.getpass(prompt = "heroku password:")
+    r = request(HEROKU_URL, userid, passwd)
     s = filter(lambda x: x[u"description"] == "Heroku CLI", r)
     if s:
-        result["heroku_user_name"] = HEROKU_USER
+        result["heroku_user_name"] = userid
         result["heroku_api_token"] = s[0][u"access_tokens"][0][u"token"]
 
 ## write file
