@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
-import requests
 import getpass
 import json
 import sys
 import os.path
+import urllib2
+import base64
 
 GITHUB      = True
 GITHUB_USER = "philopon"
@@ -14,24 +15,28 @@ HEROKU      = True
 HEROKU_USER = "philopon.dependence@gmail.com"
 HEROKU_URL  = "https://api.heroku.com/oauth/authorizations"
 
+def request (url, username, password):
+    b64 = base64.encodestring('%s:%s' % (username, password)).replace('\n', '')
+    req = urllib2.Request(url)
+    req.add_header("Authorization", "Basic %s" % b64)
+    return json.load(urllib2.urlopen(req))
+
 result = {}
 
-## github
-
 if GITHUB:
-    github_r = requests.get(GITHUB_URL, auth=(GITHUB_USER, getpass.getpass(prompt = "github password:")))
-    github   = filter(lambda x: x[u"note"] == "ansible", github_r.json())
-
-    if github:
-       result["github_api_token"] = github[0][u"token"]
+    r = request(GITHUB_URL, GITHUB_USER, getpass.getpass(prompt = "github password:"))
+    s = filter(lambda x: x[u"note"] == "ansible", r)
+    if s:
+       result["github_api_token"] = s[0][u"token"]
 
 # heroku
 
 if HEROKU:
-    heroku_r = requests.get(HEROKU_URL, auth=(HEROKU_USER,  getpass.getpass(prompt = "heroku password:")))
-    heroku   = filter(lambda x: x[u"description"] == "Heroku CLI", heroku_r.json())
-    if heroku:
-        result["heroku_api_token"] = heroku[0][u"access_tokens"][0][u"token"]
+    r = request(HEROKU_URL, HEROKU_USER, getpass.getpass(prompt = "heroku password:"))
+    s = filter(lambda x: x[u"description"] == "Heroku CLI", r)
+    if s:
+        result["heroku_user_name"] = HEROKU_USER
+        result["heroku_api_token"] = s[0][u"access_tokens"][0][u"token"]
 
 ## write file
 
