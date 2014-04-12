@@ -1,6 +1,6 @@
 ---
-ghc_version: 7.8.1
-ghc_archive: ghc-{{ghc_version}}-x86_64-unknown-linux-deb7.tar.bz2
+ghc_version: 7.8.2
+ghc_archive: ghc-{{ghc_version}}-x86_64-unknown-linux-deb7.tar.xz
 ghc_url: https://www.haskell.org/ghc/dist/{{ghc_version}}/{{ghc_archive}}
 ghc_prefix: /usr/local
 
