@@ -1,0 +1,15 @@
+---
+# mac, debian
+- hosts: all
+  tasks:
+    - name: install virtualenv
+      sudo: True
+      apt: pkg=python-virtualenv {{update_apt}}
+      when: ansible_distribution == "Debian"
+
+    - name: install httplib2
+      pip: name=httplib2 virtualenv={{ansible_env.HOME}}/.virtualenvs/ansible virtualenv_site_packages=yes
+
+    - set_fact: 
+        ansible_python_interpreter: "{{ansible_env.HOME}}/.virtualenvs/ansible/bin/python"
+

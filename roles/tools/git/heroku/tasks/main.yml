@@ -1,11 +1,5 @@
 ---
 # mac, debian
-
-- name: install curl
-  sudo: True
-  apt: pkg=curl {{update_apt}}
-  when: ansible_distribution == "Debian"
-
 - name: get public key
   register: public_key
   command: cat ~/.ssh/id_rsa.pub
@@ -14,35 +8,30 @@
 - name: include token
   include_vars: "{{token_file_path}}"
 
-- name: create request
+- name: create query
   set_fact:
-    request_body: |
-      {
-        "public_key":   "{{public_key.stdout_lines[0]}}"
-      }
+    request_body: { public_key: "{{public_key.stdout_lines[0]}}" }
 
-- name: heroku common query
-  set_fact: 
-    heroku_query: |
-      curl -s https://api.heroku.com/account/keys
-      -H 'Accept: application/vnd.heroku+json; version=3'
-      -H 'Content-Type: application/json'
-      -u '{{heroku_user_name}}:{{heroku_api_token}}'
+    heroku_query: >
+      url=https://api.heroku.com/account/keys
+      HEADER_Accept='application/vnd.heroku+json; version=3'
+      HEADER_Content-Type='application/json'
+      HEADER_Authorization="Bearer {{heroku_api_token}}"
+
+    key_exists: False
+
+- name: get public keys
+  register: public_keys
+  uri: "{{heroku_query}}"
 
 - name: check public key
-  register: check
-  ignore_errors: True
-  changed_when: False
-  script: |
-    ../check_key.py \"{{heroku_user_name}}\" \"{{heroku_api_token}}\" \"{{public_key.stdout_lines[0]}}\"
+  set_fact: { key_exists: True }
+  with_items: public_keys.json
+  when: item.public_key == "{{public_key.stdout_lines[0]}}"
 
 - name: register public key
-  register: result
-  command: |
-    {{heroku_query}} -XPOST -w '%{http_code}'
-    -d '{ "public_key": "{{public_key.stdout_lines[0]}}" }'
-  failed_when:   result.stdout_lines[-1][0:3] != "201"
-  ignore_errors: result.stdout_lines[-1][0:3] != "422"
-  changed_when:  result.stdout_lines[-1][0:3] == "201"
-  when: check|failed
+  uri: >
+    {{heroku_query}} method=POST body='{{ request_body|to_nice_json }}' status_code=201
+  when: not key_exists
+  changed_when: True
 

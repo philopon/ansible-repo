@@ -1,11 +1,5 @@
 ---
 # mac, debian
-
-- name: install curl
-  sudo: True
-  apt: pkg=curl {{update_apt}}
-  when: ansible_distribution == "Debian"
-
 - name: get public key
   register: public_key
   command: cat ~/.ssh/id_rsa.pub
@@ -16,8 +10,6 @@
 
 - name: create request
   set_fact:
-    request_header: |
-      Authorization: token {{github_api_token}}
     request_body: |
       {
         "title": "{{key_title}}",
@@ -26,10 +18,11 @@
 
 - name: register public key
   register: result
-  command:
-    curl -s -w '%{http_code}'
-      -X POST -d '{{request_body | to_nice_json}}' -H '{{request_header}}' https://api.github.com/user/keys
-  failed_when:   result.stdout_lines[-1][0:3] != "201"
-  ignore_errors: result.stdout_lines[-1][0:3] != "422"
-  changed_when:  result.stdout_lines[-1][0:3] == "201"
+  uri: >
+      method=POST url=https://api.github.com/user/keys
+      body='{{ request_body | to_nice_json }}'
+      HEADER_Authorization="token {{github_api_token}}"
+      status_code=201
+  changed_when: result.status == 201
+  failed_when: result.status  not in [201, 422]
 
