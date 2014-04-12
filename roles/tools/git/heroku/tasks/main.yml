@@ -6,19 +6,9 @@
   apt: pkg=curl {{update_apt}}
   when: ansible_distribution == "Debian"
 
-- name: test key presence
-  command: test -f ~/.ssh/heroku
-  register: key_presence
-  ignore_errors: True
-  changed_when: False
-
-- name: create heroku key
-  command: ssh-keygen -t rsa -b 2048 -N '' -f ~/.ssh/heroku
-  when: key_presence|failed
-
 - name: get public key
   register: public_key
-  command: cat ~/.ssh/heroku.pub
+  command: cat ~/.ssh/id_rsa.pub
   changed_when: False
 
 - name: include token

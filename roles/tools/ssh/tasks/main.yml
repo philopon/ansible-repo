@@ -1,0 +1,12 @@
+---
+# mac, debian
+- name: test key presence
+  command: test -f ~/.ssh/id_rsa
+  register: key_presence
+  ignore_errors: True
+  changed_when: False
+
+- name: create key
+  command: ssh-keygen -t rsa -b 2048 -N '' -f ~/.ssh/id_rsa
+  when: key_presence|failed
+

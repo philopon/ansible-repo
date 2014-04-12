@@ -6,19 +6,9 @@
   apt: pkg=curl {{update_apt}}
   when: ansible_distribution == "Debian"
 
-- name: test key presence
-  command: test -f ~/.ssh/github
-  register: key_presence
-  ignore_errors: True
-  changed_when: False
-
-- name: create github key
-  command: ssh-keygen -t rsa -b 2048 -N '' -f ~/.ssh/github
-  when: key_presence|failed
-
 - name: get public key
   register: public_key
-  command: cat ~/.ssh/github.pub
+  command: cat ~/.ssh/id_rsa.pub
   changed_when: False
 
 - name: include token
@@ -43,12 +33,3 @@
   ignore_errors: result.stdout_lines[-1][0:3] != "422"
   changed_when:  result.stdout_lines[-1][0:3] == "201"
 
-- name: update .ssh/config
-  ssh_config:
-    host=github.com
-    User=git
-    Port=22
-    Hostname=github.com
-    IdentityFile=~/.ssh/github
-    TCPKeepAlive=yes
-    IdentitiesOnly=yes
