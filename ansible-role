@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+ansible_dir=`dirname $0`
+tmp=`mktemp $ansible_dir/.ansible-role.XXXXXX`
+role=$1
+shift
+
+cat <<EOS > $tmp
+---
+- hosts: all
+  roles:
+    - "$role"
+EOS
+
+ansible-playbook $tmp "$@"
+rm $tmp
+

@@ -1,9 +1,0 @@
----
-# create haskell box
-- hosts: all
-  roles:
-    - haskell
-    - utils/cleanup/cache
-    - utils/cleanup/remove
-    - utils/cleanup/whiteout
-
