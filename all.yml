@@ -1,0 +1,15 @@
+---
+- include: initialize.yml
+
+- hosts: all
+  tasks:
+    - authorized_key: user="{{ansible_user_id}}" key="{{lookup('file', '~/.ssh/id_rsa.pub')}}"
+  roles:
+    - haskell
+    - database
+
+    - tools/git/github
+    - tools/heroku
+    - tools/vim
+    - tools/zsh
+
