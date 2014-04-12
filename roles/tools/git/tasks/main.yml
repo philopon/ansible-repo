@@ -4,3 +4,19 @@
   sudo: True
   when: ansible_distribution == "Debian"
 
+- name: check git config
+  register: git_user_config
+  command: git config --get user.{{item}}
+  changed_when: False
+  with_items:
+    - name
+    - email
+
+- name: set git user.name
+  command: git config --global user.name {{ansible_user_id}}
+  when: git_user_config.results[0].rc != 0
+
+- name: set git user.email
+  command: git config --global user.email {{email}}
+  when: git_user.email | failed
+  when: git_user_config.results[1].rc != 0

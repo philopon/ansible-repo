@@ -1,3 +1,7 @@
 key_title:       "{{ansible_user_id}}@{{ansible_fqdn}}"
+email:     philopon.dependence@gmail.com
+
 token_file_path: token.json
+
 update_apt: update_cache=yes cache_valid_time={{24 * 60 * 60}}
+
