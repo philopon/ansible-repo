@@ -31,15 +31,28 @@
         "public_key":   "{{public_key.stdout_lines[0]}}"
       }
 
+- name: heroku common query
+  set_fact: 
+    heroku_query: |
+      curl -s https://api.heroku.com/account/keys
+      -H 'Accept: application/vnd.heroku+json; version=3'
+      -H 'Content-Type: application/json'
+      -u '{{heroku_user_name}}:{{heroku_api_token}}'
+
+- name: check public key
+  register: check
+  ignore_errors: True
+  changed_when: False
+  script: |
+    ../check_key.py \"{{heroku_user_name}}\" \"{{heroku_api_token}}\" \"{{public_key.stdout_lines[0]}}\"
+
 - name: register public key
   register: result
   command: |
-    curl -s -w '%{http_code}' -X POST https://api.heroku.com/account/keys
+    {{heroku_query}} -XPOST -w '%{http_code}'
     -d '{ "public_key": "{{public_key.stdout_lines[0]}}" }'
-    -H 'Accept: application/vnd.heroku+json; version=3'
-    -H 'Content-Type: application/json'
-    -u '{{heroku_user_name}}:{{heroku_api_token}}'
   failed_when:   result.stdout_lines[-1][0:3] != "201"
   ignore_errors: result.stdout_lines[-1][0:3] != "422"
   changed_when:  result.stdout_lines[-1][0:3] == "201"
+  when: check|failed
 
