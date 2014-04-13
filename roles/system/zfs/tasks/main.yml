@@ -31,11 +31,6 @@
   lineinfile: dest=/etc/default/zfs regexp=^ZFS_MOUNT= line=ZFS_MOUNT=\'yes\' backup=yes
   sudo: True
 
-- name: update insserv.conf
-  lineinfile: dest=/etc/insserv.conf regexp='^\\$local_fs' backup=yes 
-    line='$local_fs       +mountall +mountall-bootclean +mountoverflowtmp +umountfs +zfs'
-  sudo: True
-
 - name: zfs-mount
   service: name=zfs-mount enabled=yes state=started
   sudo: True
