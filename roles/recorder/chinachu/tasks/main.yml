@@ -27,16 +27,20 @@
   sudo_user: chinachu
   when: chinachu.changed
 
-- name: create init_script
+- name: create init script
   sudo: True
   sudo_user: chinachu
-  shell: /home/chinachu/chinachu/chinachu service {{item}} initscript > /tmp/chinachu-{{item}}
+  shell: >
+    /home/chinachu/chinachu/chinachu service {{item}} initscript |
+    awk '/# Required-Start/{print $0, "zfs-mount"}!/# Required-Start/ {print $0}' |
+    awk '/# Required-Stop/ {print $0, "zfs-mount"}!/# Required-Stop/  {print $0}' >
+    /tmp/chinachu-{{item}}
   changed_when: False
   with_items:
     - operator
     - wui
 
-- name: set init_script
+- name: set init script
   sudo: True
   shell: |
     chown root:root /tmp/chinachu-{{item}}
