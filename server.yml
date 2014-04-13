@@ -1,0 +1,14 @@
+---
+- hosts: server
+  tasks:
+    - include: initialize.yml
+
+- hosts: server
+  tasks:
+    - authorized_key: user="{{ansible_user_id}}" key="{{lookup('file', '~/.ssh/id_rsa.pub')}}"
+  roles:
+    - system/zfs
+    - tools/ssh
+    - recorder/chinachu
+
+
