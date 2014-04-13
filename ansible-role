@@ -2,12 +2,14 @@
 
 ansible_dir=`dirname $0`
 tmp=`mktemp $ansible_dir/.ansible-role.XXXXXX`
-role=$1
+target=$1
+role=$2
+shift
 shift
 
 cat <<EOS > $tmp
 ---
-- hosts: all
+- hosts: $target
   roles:
     - "$role"
 EOS
