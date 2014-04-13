@@ -14,15 +14,23 @@
   apt16: deb=/tmp/zfsonlinux.deb
   when: installed|failed
   sudo: True
+  register: add_repo
 
 - name: cleanup
   file: path=/tmp/zfsonlinux.deb state=absent
 
 - name: install spl
-  apt: pkg=spl update_cache=yes
+  apt: pkg=spl update_cache={{add_repo|changed}}
   sudo: True
 
 - name: install zfs
   apt: pkg=debian-zfs
   sudo: True
 
+- name: zfs default configure
+  copy: src=../files/zfs dest=/etc/default/zfs backup=yes
+  sudo: True
+
+- name: zfs-mount
+  service: name=zfs-mount enabled=yes state=started
+  sudo: True
