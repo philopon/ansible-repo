@@ -32,5 +32,5 @@
   sudo: True
 
 - name: zfs-mount
-  service: name=zfs-mount enabled=yes state=started
+  service: name=zfs-mount enabled=yes state=restarted
   sudo: True

@@ -1,0 +1,8 @@
+---
+- name: install firewalld
+  apt:  pkg={{item}} {{update_apt}}
+  sudo: True
+  with_items:
+    - firewalld
+    - python-six
+

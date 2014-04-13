@@ -58,7 +58,7 @@
 
 - name: start chinachu
   sudo: True
-  service: name={{item}} enabled=yes state=started
+  service: name={{item}} enabled=yes state=restarted
   with_items:
     - chinachu-operator
     - chinachu-wui
