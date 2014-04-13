@@ -1,5 +1,7 @@
 ---
-- include: initialize.yml
+- hosts: all
+  tasks:
+    - include: initialize.yml
 
 - hosts: all
   tasks:

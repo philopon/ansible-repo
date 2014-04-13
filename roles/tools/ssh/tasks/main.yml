@@ -10,3 +10,8 @@
   command: ssh-keygen -t rsa -b 2048 -N '' -f ~/.ssh/id_rsa
   when: key_presence|failed
 
+- name: copy sshd_config
+  copy: src=../files/sshd_config dest=/etc/ssh/sshd_config backup=yes
+  sudo: True
+  notify: restart sshd
+
