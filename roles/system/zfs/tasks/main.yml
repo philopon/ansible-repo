@@ -1,0 +1,28 @@
+---
+- name: check installed repository
+  command: dpkg -l zfsonlinux
+  ignore_errors: True
+  register: installed
+  changed_when: False
+
+- name: fetch repository package
+  get_url: url=http://archive.zfsonlinux.org/debian/pool/main/z/zfsonlinux/zfsonlinux_2%7Ewheezy_all.deb 
+           dest=/tmp/zfsonlinux.deb
+  when: installed|failed
+
+- name: install repository
+  apt16: deb=/tmp/zfsonlinux.deb
+  when: installed|failed
+  sudo: True
+
+- name: cleanup
+  file: path=/tmp/zfsonlinux.deb state=absent
+
+- name: install spl
+  apt: pkg=spl update_cache=yes
+  sudo: True
+
+- name: install zfs
+  apt: pkg=debian-zfs
+  sudo: True
+
