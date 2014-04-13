@@ -29,8 +29,16 @@
 
 - name: create init_script
   sudo: True
+  sudo_user: chinachu
+  shell: /home/chinachu/chinachu/chinachu service {{item}} initscript > /tmp/chinachu-{{item}}
+  changed_when: False
+  with_items:
+    - operator
+    - wui
+
+- name: set init_script
+  sudo: True
   shell: |
-    /home/chinachu/chinachu/chinachu service {{item}} initscript > /tmp/chinachu-{{item}}
     chown root:root /tmp/chinachu-{{item}}
     chmod +x /tmp/chinachu-{{item}}
     mv /tmp/chinachu-{{item}} /etc/init.d/
