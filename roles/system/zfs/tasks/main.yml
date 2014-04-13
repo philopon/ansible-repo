@@ -27,8 +27,8 @@
   apt: pkg=debian-zfs
   sudo: True
 
-- name: zfs default configure
-  copy: src=../files/zfs dest=/etc/default/zfs backup=yes
+- name: ZFS_MOUNT='yes'
+  lineinfile: dest=/etc/default/zfs regexp=^ZFS_MOUNT= line=ZFS_MOUNT=\'yes\'
   sudo: True
 
 - name: zfs-mount
