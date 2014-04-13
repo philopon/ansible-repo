@@ -1,0 +1,52 @@
+- name: install dependencies
+  apt: pkg={{item}} {{update_apt}}
+  sudo: True
+  with_items:
+    - build-essential
+    - curl
+    - git-core 
+    - libssl-dev 
+    - yasm
+    - libtool 
+    - autoconf
+
+- name: create chinachu user
+  sudo: True
+  user: name=chinachu uid=1100 groups=video shell=/bin/bash
+
+- name: clone chinachu
+  git: repo=https://github.com/kanreisa/Chinachu.git dest=~/chinachu
+  sudo: True
+  sudo_user: chinachu
+  register: chinachu
+  changed_when: chinachu.before != chinachu.after
+
+- name: execute installer
+  shell: echo 2 | ./chinachu installer chdir=~/chinachu
+  sudo: True
+  sudo_user: chinachu
+  when: chinachu.changed
+
+- name: create init_script
+  sudo: True
+  shell: |
+    /home/chinachu/chinachu/chinachu service {{item}} initscript > /tmp/chinachu-{{item}}
+    chown root:root /tmp/chinachu-{{item}}
+    chmod +x /tmp/chinachu-{{item}}
+    mv /tmp/chinachu-{{item}} /etc/init.d/
+  changed_when: False
+  with_items:
+    - operator
+    - wui
+
+- name: copy configuration
+  copy: src=../files/config.json dest=~/chinachu/config.json
+  sudo: True
+  sudo_user: chinachu
+
+- name: start chinachu
+  sudo: True
+  service: name={{item}} enabled=yes state=started
+  with_items:
+    - chinachu-operator
+    - chinachu-wui

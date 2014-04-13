@@ -1,0 +1,63 @@
+---
+- file: path=~/src/recorder state=directory
+
+### card reader
+- apt: pkg={{item}}
+  with_items: 
+    - pcscd
+    - pcsc-tools
+    - checkinstall
+    - libpcsclite-dev
+    - pkg-config
+    - autoconf
+  sudo: True
+
+### driver
+- name: clone pt3 driver
+  git: repo=https://github.com/m-tsudo/pt3.git dest=~/src/recorder/pt3
+  register: pt3_driver
+  changed_when: pt3_driver.before != pt3_driver.after
+
+- name: install pt3 driver
+  command: bash ./dkms.install chdir={{ansible_env.HOME}}/src/recorder/pt3
+  when: pt3_driver.changed
+  sudo: True
+  notify: reboot
+
+### libarib25
+- name: clone libarib25
+  git: repo=https://github.com/stz2012/libarib25.git dest=~/src/recorder/libarib25
+  register: libarib25
+  changed_when: libarib25.before != libarib25.after
+
+- name: build libarib25
+  command: make all chdir=~/src/recorder/libarib25
+  when: libarib25.changed
+
+- name: checkinstall libarib25
+  command: checkinstall -y chdir={{ansible_env.HOME}}/src/recorder/libarib25
+  sudo: True
+  when: libarib25.changed
+
+### recpt1
+- name: clone recpt1
+  git: repo=https://github.com/philopon/recpt1.git dest=~/src/recorder/recpt1
+  register: recpt1
+  changed_when: recpt1.before != recpt1.after
+
+- name: autogen recpt1
+  command: ./autogen.sh  chdir=~/src/recorder/recpt1
+  when: recpt1.changed
+
+- name: configure recpt1
+  command: ./configure chdir=~/src/recorder/recpt1
+  when: recpt1.changed
+
+- name: build recpt1
+  command: make all chdir=~/src/recorder/recpt1
+  when: recpt1.changed
+
+- name: checkinstall recpt1
+  command: checkinstall -y --pkgversion=0.0.1 chdir={{ansible_env.HOME}}/src/recorder/recpt1
+  sudo: True
+  when: recpt1.changed

@@ -1,0 +1,72 @@
+{
+  "recordedDir" : "/zdata/recorded/scrumbled/",
+  "temporaryDir": "/tmp/",
+  
+  "wuiUsers": [
+    "akari:bakuhatsu"
+  ],
+  
+  "wuiPort"        : 10772,
+  "wuiHost"        : "::",
+  "wuiTlsKeyPath"  : null,
+  "wuiTlsCertPath" : null,
+  "wuiOpenServer"  : false,
+  "wuiOpenPort"    : 20772,
+  "wuiPreviewer"   : true,
+  "wuiStreamer"    : true,
+  "wuiFiler"       : true,
+  "wuiConfigurator": true,
+  
+  "recordedFormat": "[<date:yymmdd-HHMM>][<type><channel>][<tuner>]<title>.m2ts",
+  
+  "tuners": [
+    {
+      "name"        : "PT3-S1",
+      "isScrambling": true,
+      "types"       : [ "BS", "CS" ],
+      "command"     : "recpt1 --device /dev/pt3video0 --sid <sid> <channel> - -"
+    },
+    {
+      "name"        : "PT3-S2",
+      "isScrambling": true,
+      "types"       : [ "BS", "CS" ],
+      "command"     : "recpt1 --device /dev/pt3video1 --sid <sid> <channel> - -"
+    },
+    {
+      "name"        : "PT3-T1",
+      "isScrambling": true,
+      "types"       : [ "GR" ],
+      "command"     : "recpt1 --device /dev/pt3video2 --sid <sid> <channel> - -"
+    },
+    {
+      "name"        : "PT3-T2",
+      "isScrambling": true,
+      "types"       : [ "GR" ],
+      "command"     : "recpt1 --device /dev/pt3video3 --sid <sid> <channel> - -"
+    }
+  ],
+
+   "channels": [
+    { "type": "GR", "channel": "13" },
+    { "type": "GR", "channel": "14" },
+    { "type": "GR", "channel": "15" },
+    { "type": "GR", "channel": "16" },
+    { "type": "GR", "channel": "17" },
+    { "type": "GR", "channel": "18" },
+    { "type": "GR", "channel": "23" },
+    { "type": "GR", "channel": "24" },
+    { "type": "GR", "channel": "26" },
+    { "type": "GR", "channel": "21" },
+
+    { "type": "BS", "channel": "101" },
+    { "type": "BS", "channel": "103" },
+    { "type": "BS", "channel": "141" },
+    { "type": "BS", "channel": "151" },
+    { "type": "BS", "channel": "161" },
+    { "type": "BS", "channel": "171" },
+    { "type": "BS", "channel": "181" },
+    { "type": "BS", "channel": "211" },
+    { "type": "BS", "channel": "222" },
+    { "type": "BS", "channel": "258" }
+  ] 
+}
