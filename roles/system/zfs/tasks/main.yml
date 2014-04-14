@@ -27,7 +27,8 @@
   apt: pkg=debian-zfs
   sudo: True
 
-- name: ZFS_MOUNT='yes'
+# TODO: change systemd (when compatible version released)
+- name: ZFS_MOUNT='yes' 
   lineinfile: dest=/etc/default/zfs regexp=^ZFS_MOUNT= line=ZFS_MOUNT=\'yes\' backup=yes
   sudo: True
 
