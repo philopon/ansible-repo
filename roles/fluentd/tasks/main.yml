@@ -20,8 +20,12 @@
 - apt: pkg=libcurl4-openssl-dev
   sudo: True
 
-- gem: executable=/usr/lib/fluent/ruby/bin/fluent-gem name=fluent-plugin-elasticsearch
+- gem: executable=/usr/lib/fluent/ruby/bin/fluent-gem name={{item}} state=present user_install=no
   sudo: True
+  with_items:
+    - fluent-plugin-elasticsearch
+    - fluent-plugin-parser
+    - fluent-plugin-record-reformer
 
 - copy: src=../files/td-agent.conf dest=/etc/td-agent/td-agent.conf
   sudo: True
