@@ -1,8 +1,8 @@
 ---
-- name: install firewalld
-  apt:  pkg={{item}} {{update_apt}}
+- name: install ufw
+  apt:  pkg=ufw {{update_apt}}
   sudo: True
-  with_items:
-    - firewalld
-    - python-six
+
+- include: global.yml
+  sudo: True
 

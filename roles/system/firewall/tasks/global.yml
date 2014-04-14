@@ -1,0 +1,24 @@
+---
+- name: enable ufw
+  ufw16: state=enabled policy=deny 
+
+- name: copy rules to application.d
+  copy: src={{item}} dest=/etc/ufw/applications.d/ force=no
+  with_fileglob:
+    - ../files/applications.d/*
+
+- name: reject outgoing
+  ufw16: state=enabled policy=reject direction=outgoing
+
+- name: allow ssh from RFC1918
+  ufw16: rule=allow name=OpenSSH src={{ item }}
+  with_items:
+    - 10.0.0.0/8
+    - 172.16.0.0/12
+    - 192.168.0.0/16
+
+- name: allow outgoing
+  ufw16: rule=allow direction=out name="{{item}}"
+  with_items:
+    - WWW Full
+    - DNS
