@@ -1,3 +1,0 @@
-- name: reboot
-  command: reboot
-  sudo: True

@@ -22,7 +22,9 @@
   command: bash ./dkms.install chdir={{ansible_env.HOME}}/src/recorder/pt3
   when: pt3_driver.changed
   sudo: True
-  notify: reboot
+
+- include: ../../../include/reboot.yml
+  when: pt3_driver.changed
 
 ### libarib25
 - name: clone libarib25
