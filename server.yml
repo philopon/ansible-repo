@@ -8,6 +8,18 @@
     - authorized_key: user="{{ansible_user_id}}" key="{{lookup('file', '~/.ssh/id_rsa.pub')}}"
   roles:
     - system/zfs
+    - system/firewall
+    - system/systemd
+
     - tools/ssh
+    - tools/git/github
+    - tools/heroku
+    - tools/vim
+    - tools/zsh
+
     - recorder/chinachu
+
+    - haskell
+
+    - database/postgresql
 
