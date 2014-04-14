@@ -1,0 +1,38 @@
+---
+- include: before_install.yml
+
+- apt_repository: repo='deb ftp://ftp.jp.debian.org/debian/ squeeze main non-free contrib'
+  sudo: True
+
+- apt: pkg=td-agent
+  sudo: True
+
+- user: name=td-agent groups=adm append=yes
+  sudo: True
+
+- file: path=/etc/td-agent/conf.d state=directory
+  sudo: True
+
+- file: path=/var/log/td-agent/pos state=directory
+  sudo: True
+  sudo_user: td-agent
+
+- apt: pkg=libcurl4-openssl-dev
+  sudo: True
+
+- gem: executable=/usr/lib/fluent/ruby/bin/fluent-gem name=fluent-plugin-elasticsearch
+  sudo: True
+
+- copy: src=../files/td-agent.conf dest=/etc/td-agent/td-agent.conf
+  sudo: True
+  notify: restart td-agent
+
+- copy: src={{item}} dest=/etc/td-agent/conf.d/
+  sudo: True
+  with_fileglob:
+    - ../files/conf.d/*.conf
+  notify: restart td-agent
+
+- service: name=td-agent state=started enabled=yes
+  sudo: True
+

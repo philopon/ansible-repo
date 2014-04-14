@@ -1,0 +1,27 @@
+---
+- name: install ntp
+  apt:  pkg=ntp {{update_apt}}
+  sudo: True
+
+- name: start ntp
+  service: name=ntp enabled=yes state=started
+  sudo: True
+
+- name: create limits.d conf
+  copy: src=../files/limits dest=/etc/security/limits.d/50-fluentd.conf
+  sudo: True
+  register: limits
+
+- include: ../../../include/reboot.yml
+  when: limits.changed
+
+- file: path=/etc/sysctl.d/50-fluentd.conf state=touch
+  changed_when: False
+  sudo: True
+
+- sysctl: name="{{item.name}}" value="{{item.value}}" sysctl_file=/etc/sysctl.d/50-fluentd.conf
+  sudo: True
+  with_items:
+    - { name: net.ipv4.tcp_tw_recycle,      value: 1 }
+    - { name: net.ipv4.tcp_tw_reuse,        value: 1 }
+    - { name: net.ipv4.ip_local_port_range, value: 10240    65535 }

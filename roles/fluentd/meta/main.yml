@@ -1,0 +1,7 @@
+---
+dependencies:
+  - role:          'utils/add_repo' 
+    repo_id:       'A12E206F'
+    repo_key_url:  'http://packages.treasure-data.com/debian/RPM-GPG-KEY-td-agent'
+    repo_deb_line: 'deb http://packages.treasure-data.com/debian/ lucid contrib'
+

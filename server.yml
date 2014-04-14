@@ -5,6 +5,9 @@
 
 - hosts: server
   tasks:
+    - apt: pkg=ntp
+      sudo: True
+
     - authorized_key: user="{{ansible_user_id}}" key="{{lookup('file', '~/.ssh/id_rsa.pub')}}"
   roles:
     - system/zfs
@@ -16,6 +19,8 @@
     - tools/heroku
     - tools/vim
     - tools/zsh
+
+    - fluentd
 
     - recorder/chinachu
 
