@@ -19,6 +19,9 @@
 
     - recorder/chinachu
 
+    - web/nginx
+    - elasticsearch
+
     - haskell
 
     - database/postgresql
