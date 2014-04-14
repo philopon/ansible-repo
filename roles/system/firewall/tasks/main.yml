@@ -3,6 +3,11 @@
   apt:  pkg=ufw {{update_apt}}
   sudo: True
 
+- name: stop logging to messages
+  lineinfile: dest=/etc/rsyslog.d/20-ufw.conf regexp='^#\s*&\s+~\s*$' line='& ~'
+  sudo: True
+  notify: restart rsyslog
+
 - include: global.yml
   sudo: True
 
