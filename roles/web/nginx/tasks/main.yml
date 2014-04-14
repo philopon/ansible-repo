@@ -1,0 +1,21 @@
+---
+- name: install nginx
+  apt: pkg={{item}}
+  sudo: True
+  with_items:
+    - nginx
+
+- name: enable and start nginx
+  sudo: True
+  service: name=nginx enabled=yes state=started
+
+- name: disable default site
+  sudo: True
+  file: path=/etc/nginx/sites-enabled/default state=absent
+  register: remove_default
+
+- name: reload nginx
+  sudo: True
+  service: name=nginx state=reloaded
+  when: remove_default.changed
+
