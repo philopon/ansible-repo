@@ -1,0 +1,4 @@
+[ftp Full]
+name=ftp/ftps
+description=ftp/ftps
+ports=ftp-data|ftp|ftps-data|ftps
