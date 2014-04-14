@@ -1,0 +1,11 @@
+server {
+  listen      *:{{kibana_port}};
+  server_name localhost;
+
+  location / {
+    root  {{kibana_basedir}}/kibana-{{kibana_version}};
+    index index.html index.htm;
+    allow 192.168.0.1/22;
+    deny all;
+  }
+}

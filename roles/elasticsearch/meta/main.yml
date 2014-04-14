@@ -1,0 +1,8 @@
+---
+dependencies:
+  - role:          'utils/add_repo' 
+    repo_id:       'D88E42B4'
+    repo_key_url:  'http://packages.elasticsearch.org/GPG-KEY-elasticsearch'
+    repo_deb_line: 'deb http://packages.elasticsearch.org/elasticsearch/0.90/debian stable main'
+
+  - web/nginx

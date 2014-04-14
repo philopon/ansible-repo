@@ -1,0 +1,4 @@
+---
+kibana_version: 3.0.1
+kibana_basedir: /usr/share/elasticsearch
+kibana_port:    19374

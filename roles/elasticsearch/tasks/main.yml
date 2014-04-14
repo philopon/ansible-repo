@@ -1,0 +1,47 @@
+---
+- name: install elasticsearch
+  apt: pkg={{item}}
+  sudo: True
+  with_items:
+    - elasticsearch
+    - openjdk-7-jre-headless
+
+- name: check kibana
+  command: test -d {{kibana_basedir}}/kibana-{{kibana_version}}
+  ignore_errors: True
+  changed_when: False
+  register: kibana_installed
+
+- name: fetch kibana
+  get_url: 
+    url=https://download.elasticsearch.org/kibana/kibana/kibana-{{kibana_version}}.tar.gz 
+    dest=/tmp/kibana-{{kibana_version}}.tar.gz
+  when: kibana_installed|failed
+
+- name: unpack kibana
+  command: tar xvf /tmp/kibana-{{kibana_version}}.tar.gz chdir={{kibana_basedir}}
+  when: kibana_installed|failed
+  sudo: True
+
+- name: delete archive
+  file: path=/tmp/kibana-{{kibana_version}}.tar.gz state=absent
+
+- name: set nginx setting
+  template: src=../templates/kibana-nginx.j2 dest=/etc/nginx/sites-available/kibana mode=644
+  sudo: True
+  notify: reload nginx
+
+- name: enable kibana
+  file: src=../sites-available/kibana dest=/etc/nginx/sites-enabled/kibana state=link
+  sudo: True
+
+- name: copy ufw application
+  template: src=../templates/ufw-elasticsearch.j2 dest=/etc/ufw/applications.d/ufw-elasticsearch mode=644
+  sudo: True
+
+- name: kibana ufw configuration
+  ufw16: rule=allow direction=in name="{{item}}" src=192.168.0.0/22
+  sudo: True
+  with_items:
+    - kibana
+    - elasticsearch
