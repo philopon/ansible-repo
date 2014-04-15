@@ -1,0 +1,4 @@
+[ntpq]
+name=NTP
+description=network time protocol
+ports=ntp

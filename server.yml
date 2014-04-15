@@ -5,14 +5,12 @@
 
 - hosts: server
   tasks:
-    - apt: pkg=ntp
-      sudo: True
-
     - authorized_key: user="{{ansible_user_id}}" key="{{lookup('file', '~/.ssh/id_rsa.pub')}}"
   roles:
     - system/zfs
     - system/firewall
     - system/systemd
+    - system/ntp
 
     - tools/ssh
     - tools/git/github

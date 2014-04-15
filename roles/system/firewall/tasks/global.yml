@@ -3,7 +3,7 @@
   ufw16: state=enabled policy=deny 
 
 - name: copy rules to application.d
-  copy: src={{item}} dest=/etc/ufw/applications.d/ force=no
+  copy: src={{item}} dest=/etc/ufw/applications.d/ backup=yes
   with_fileglob:
     - ../files/applications.d/*
 

@@ -1,0 +1,9 @@
+- apt: pkg=ntp
+  sudo: True
+
+- copy: src=../files/ufw-ntp dest=/etc/ufw/applications.d/
+  sudo: True
+
+- ufw16: rule=allow direction=out name=ntpq
+  sudo: True
+
