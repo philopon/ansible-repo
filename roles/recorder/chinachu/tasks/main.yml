@@ -55,6 +55,7 @@
   template: src=../templates/config.json.j2 dest=~/chinachu/config.json
   sudo: True
   sudo_user: chinachu
+  notify: restart chinachu
 
 - name: copy ufw application
   template: src=../templates/ufw-chinachu.j2 dest=/etc/ufw/applications.d/ufw-chinachu mode=644

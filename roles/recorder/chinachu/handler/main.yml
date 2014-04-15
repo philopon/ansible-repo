@@ -1,0 +1,6 @@
+- name: restart chinachu
+  sudo: True
+  service: name={{item}} state=restarted
+  with_items:
+    - chinachu-operator
+    - chinachu-wui
