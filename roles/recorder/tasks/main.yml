@@ -13,6 +13,13 @@
   sudo: True
 
 ### driver
+- name: check driver
+  command: modprobe pt3_drv
+  ignore_errors: True
+  register: pt3_drv_exists
+  changed_when: False
+  sudo: True
+
 - name: clone pt3 driver
   git: repo=https://github.com/m-tsudo/pt3.git dest=~/src/recorder/pt3
   register: pt3_driver
@@ -20,13 +27,19 @@
 
 - name: install pt3 driver
   command: bash ./dkms.install chdir={{ansible_env.HOME}}/src/recorder/pt3
-  when: pt3_driver.changed
+  when: pt3_drv_exists|failed or pt3_driver.changed
   sudo: True
 
 - include: ../../../include/reboot.yml
-  when: pt3_driver.changed
+  when: pt3_drv_exists|failed or pt3_driver.changed
 
 ### libarib25
+- name: check libarib25
+  command: which b25
+  ignore_errors: True
+  changed_when: False
+  register: libarib_exists
+
 - name: clone libarib25
   git: repo=https://github.com/stz2012/libarib25.git dest=~/src/recorder/libarib25
   register: libarib25
@@ -34,14 +47,20 @@
 
 - name: build libarib25
   command: make all chdir=~/src/recorder/libarib25
-  when: libarib25.changed
+  when: libarib_exists|failed or libarib25.changed
 
 - name: checkinstall libarib25
   command: checkinstall -y chdir={{ansible_env.HOME}}/src/recorder/libarib25
   sudo: True
-  when: libarib25.changed
+  when: libarib_exists|failed or libarib25.changed
 
 ### recpt1
+- name: check recpt1
+  command: which recpt1
+  ignore_errors: True
+  changed_when: False
+  register: recpt1_exists
+
 - name: clone recpt1
   git: repo=https://github.com/philopon/recpt1.git dest=~/src/recorder/recpt1
   register: recpt1
@@ -49,17 +68,17 @@
 
 - name: autogen recpt1
   command: ./autogen.sh  chdir=~/src/recorder/recpt1
-  when: recpt1.changed
+  when: recpt1_exists|failed or recpt1.changed
 
 - name: configure recpt1
   command: ./configure chdir=~/src/recorder/recpt1
-  when: recpt1.changed
+  when: recpt1_exists|failed or recpt1.changed
 
 - name: build recpt1
   command: make all chdir=~/src/recorder/recpt1
-  when: recpt1.changed
+  when: recpt1_exists|failed or recpt1.changed
 
 - name: checkinstall recpt1
   command: checkinstall -y --pkgversion=0.0.1 chdir={{ansible_env.HOME}}/src/recorder/recpt1
   sudo: True
-  when: recpt1.changed
+  when: recpt1_exists|failed or recpt1.changed
