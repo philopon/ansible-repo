@@ -10,12 +10,10 @@
 - name: reject outgoing
   ufw16: state=enabled policy=reject direction=outgoing
 
-- name: allow ssh from RFC1918
+- name: allow ssh from Home
   ufw16: rule=allow name=OpenSSH src={{ item }}
   with_items:
-    - 10.0.0.0/8
-    - 172.16.0.0/12
-    - 192.168.0.0/16
+    - "{{home_ip}}/{{home_netmask}}"
 
 - name: allow outgoing
   ufw16: rule=allow direction=out name="{{item}}"

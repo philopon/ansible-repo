@@ -57,11 +57,11 @@
   sudo_user: chinachu
 
 - name: copy ufw application
-  template: src=../templates/ufw-chinachu.j2 dest=/etc/ufw/applications.d/ufw-chinachu
+  template: src=../templates/ufw-chinachu.j2 dest=/etc/ufw/applications.d/ufw-chinachu mode=644
   sudo: True
 
 - name: chinachu ufw configuration
-  ufw16: rule=allow direction=in name=chinachu src=192.168.0.0/22
+  ufw16: rule=allow direction=in name=chinachu src={{home_ip}}/{{home_netmask}}
   sudo: True
 
 - name: start chinachu

@@ -5,7 +5,7 @@ server {
   location / {
     root  {{kibana_basedir}}/kibana-{{kibana_version}};
     index index.html index.htm;
-    allow 192.168.0.1/22;
+    allow {{home_ip}}/{{home_netmask}};
     deny all;
   }
 }
