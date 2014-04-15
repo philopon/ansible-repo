@@ -1,0 +1,26 @@
+---
+- apt: pkg=minidlna
+  sudo: True
+
+- service: name=minidlna enabled=yes state=started
+
+- template: src=../templates/minidlna.conf.j2 dest=/etc/minidlna.conf
+  sudo: True
+  notify: restart minidlna
+
+- template: src=../templates/ufw-minidlna.j2 dest=/etc/ufw/applications.d/ufw-minidlna mode=644
+  sudo: True
+
+- ufw16: rule=allow name="minidlna web"
+  sudo: True
+
+- ufw16: rule=allow proto=udp direction=out from_ip={{ ansible_ssh_host }} to_ip=239.255.255.250 to_port=1900
+  sudo: True
+
+- ufw16: rule=allow proto=udp direction=out from_ip={{ ansible_ssh_host }} from_port=1900 to_ip={{home_ip}}/{{home_netmask}}
+  sudo: True
+
+- ufw16: rule=allow proto=tcp direction=out from_ip={{ ansible_ssh_host }} to_ip={{home_ip}}/{{home_netmask}}
+  sudo: True
+
+

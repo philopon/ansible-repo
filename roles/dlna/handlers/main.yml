@@ -1,0 +1,4 @@
+---
+- name: restart minidlna
+  service: name=minidlna state=restarted
+  sudo: True

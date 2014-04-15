@@ -21,6 +21,7 @@
     - fluentd
 
     - recorder/chinachu
+    - dlna
 
     - web/nginx
     - elasticsearch
