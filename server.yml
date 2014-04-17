@@ -6,6 +6,8 @@
 - hosts: server
   tasks:
     - authorized_key: user="{{ansible_user_id}}" key="{{lookup('file', '~/.ssh/id_rsa.pub')}}"
+    - apt_repository: repo="deb http://ftp.jp.debian.org/debian wheezy-backports main contrib non-free"
+      sudo: True
   roles:
     - system/zfs
     - system/firewall
