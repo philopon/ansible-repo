@@ -1,0 +1,17 @@
+---
+- apt: pkg=netatalk
+  sudo: True
+
+- copy: src=../files/AppleVolumes.default dest=/etc/netatalk/AppleVolumes.default
+  sudo: True
+  notify: restart netatalk
+
+- ufw16: direction=in from_ip=192.168.0.0/22 rule=allow proto=tcp to_port=548
+  sudo: True
+
+- ufw16: direction=out name=Bonjour rule=allow
+  sudo: True
+
+- service: name=netatalk enabled=yes 
+  sudo: True
+
