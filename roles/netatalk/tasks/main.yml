@@ -9,6 +9,9 @@
 - ufw16: direction=in from_ip=192.168.0.0/22 rule=allow proto=tcp to_port=548
   sudo: True
 
+- ufw16: direction=in from_ip=fe80::/10 rule=allow proto=tcp to_port=548
+  sudo: True
+
 - ufw16: direction=out name=Bonjour rule=allow
   sudo: True
 
