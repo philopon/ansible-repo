@@ -4,7 +4,7 @@
   register: cabal_installed
   ignore_errors: True
   changed_when: False
-  command:  which cabal
+  command:  test -f {{cabal_prefix}}/bin/cabal
 
 - include: install.yml
   tags: cabal

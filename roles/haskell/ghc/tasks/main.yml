@@ -4,7 +4,7 @@
   register: ghc_installed
   ignore_errors: True
   changed_when: False
-  command:  which {{ghc_command}}
+  command:  test -f {{ghc_prefix}}/bin/{{ghc_command}}
 
 - include: install.yml
   tags: ghc

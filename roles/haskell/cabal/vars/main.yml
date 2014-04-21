@@ -1,6 +1,6 @@
 ---
 hackage_url: http://hackage.haskell.org
-cabal_archive: cabal-install-1.18.0.3.tar.gz
-cabal_url: http://hackage.haskell.org/package/cabal-install-1.18.0.3/{{cabal_archive}}
+cabal_archive: cabal-install-1.20.0.0.tar.gz
+cabal_url: http://hackage.haskell.org/package/cabal-install-1.20.0.0/{{cabal_archive}}
 cabal_prefix: /usr/local
 
