@@ -14,4 +14,4 @@
   copy: src=../files/sshd_config dest=/etc/ssh/sshd_config backup=yes
   sudo: True
   notify: restart sshd
-
+  when: ansible_distribution == "Debian"
