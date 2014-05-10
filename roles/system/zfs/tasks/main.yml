@@ -11,7 +11,7 @@
   when: installed|failed
 
 - name: install repository
-  apt16: deb=/tmp/zfsonlinux.deb
+  apt: deb=/tmp/zfsonlinux.deb
   when: installed|failed
   sudo: True
   register: add_repo

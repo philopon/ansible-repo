@@ -62,7 +62,7 @@
   sudo: True
 
 - name: chinachu ufw configuration
-  ufw16: rule=allow direction=in name=chinachu src={{home_ip}}/{{home_netmask}}
+  ufw: rule=allow direction=in name=chinachu src={{home_ip}}/{{home_netmask}}
   sudo: True
 
 - name: start chinachu

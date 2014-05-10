@@ -40,7 +40,7 @@
   sudo: True
 
 - name: kibana ufw configuration
-  ufw16: rule=allow direction=in name="{{item}}" src={{home_ip}}/{{home_netmask}}
+  ufw: rule=allow direction=in name="{{item}}" src={{home_ip}}/{{home_netmask}}
   sudo: True
   with_items:
     - kibana

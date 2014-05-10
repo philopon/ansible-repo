@@ -1,6 +1,6 @@
 ---
 - name: enable ufw
-  ufw16: state=enabled policy=deny 
+  ufw: state=enabled policy=deny 
 
 - name: copy rules to application.d
   copy: src={{item}} dest=/etc/ufw/applications.d/ backup=yes
@@ -8,15 +8,15 @@
     - ../files/applications.d/*
 
 - name: reject outgoing
-  ufw16: state=enabled policy=reject direction=outgoing
+  ufw: state=enabled policy=reject direction=outgoing
 
 - name: allow ssh from Home
-  ufw16: rule=allow name=OpenSSH src={{ item }}
+  ufw: rule=allow name=OpenSSH src={{ item }}
   with_items:
     - "{{home_ip}}/{{home_netmask}}"
 
 - name: allow outgoing
-  ufw16: rule=allow direction=out name="{{item}}"
+  ufw: rule=allow direction=out name="{{item}}"
   with_items:
     - WWW Full
     - DNS

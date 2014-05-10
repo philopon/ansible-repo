@@ -5,8 +5,8 @@
   when: ansible_distribution == "Debian"
 
 - name:  clone .zsh.d
-  git16: repo=git@github.com:philopon/.zsh.d.git update=no
-         dest=~/.zsh.d accept_hostkey=yes recursive=yes
+  git: repo=git@github.com:philopon/.zsh.d.git update=no
+       dest=~/.zsh.d accept_hostkey=yes recursive=yes
 
 - name: link .zshrc
   file: src=~/.zsh.d/zshrc dest=~/.zshrc state=link
